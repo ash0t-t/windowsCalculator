@@ -108,7 +108,7 @@ function updateDisplay(key) {
     } else if (key == "Backspace") {
       result.value = result.value.slice(0, -1);
     } else if (key == "=") {
-      const temp = result.value
+      const temp = result.value;
       result.value = binToDec(result.value);
       expression.textContent = temp;
     } else {
