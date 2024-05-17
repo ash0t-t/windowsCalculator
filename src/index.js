@@ -3,15 +3,15 @@ const result = document.querySelector("#result");
 const expression = document.querySelector("#expression");
 const buttons = document.querySelectorAll(".buttons button");
 
-let isBinaryView = false;
+let isBinary = false;
 viewBtn.onclick = () => {
-  isBinaryView = !isBinaryView;
-  viewBtn.textContent = isBinaryView ? "Calculator" : "Binary";
-  updateButtonVisibility();
+  isBinary = !isBinary;
+  viewBtn.textContent = isBinary ? "Calculator" : "Binary";
+  toBinary();
 };
 
 buttons.forEach((button) => {
-  button.addEventListener("click", () => handleButtonClick(button.id));
+  button.addEventListener("click", () => clickHandler(button.id));
 });
 
 document.addEventListener("keydown", (event) => {
@@ -20,11 +20,11 @@ document.addEventListener("keydown", (event) => {
     !isNaN(key) ||
     ["+", "-", "*", "/", ".", "Enter", "Backspace", "Escape"].includes(key)
   ) {
-    handleKeyboardInput(key);
+    keyboardHandler(key);
   }
 });
 
-function handleButtonClick(id) {
+function clickHandler(id) {
   const keyMap = {
     percent: "%",
     ce: "CE",
@@ -55,22 +55,18 @@ function handleButtonClick(id) {
   processInput(key);
 }
 
-function handleKeyboardInput(key) {
+function keyboardHandler(key) {
   const keyMap = {
     Enter: "=",
     Backspace: "Backspace",
     Escape: "C",
-    "*": "*",
-    "/": "/",
-    "+": "+",
-    "-": "-",
   };
   const mappedKey = keyMap[key] || key;
   processInput(mappedKey);
 }
 
 function processInput(key) {
-  if (isBinaryView) {
+  if (isBinary) {
     if (["0", "1", "Backspace", "C", "CE", "="].includes(key)) {
       updateDisplay(key);
     }
@@ -100,23 +96,23 @@ function processInput(key) {
 }
 
 function updateDisplay(key) {
-  if (isBinaryView) {
+  if (isBinary) {
     if (key == "C") {
-      clearCalculator();
+      clear();
     } else if (key == "CE") {
       result.value = "";
     } else if (key == "Backspace") {
       result.value = result.value.slice(0, -1);
     } else if (key == "=") {
       const temp = result.value;
-      result.value = binToDec(result.value);
+      result.value = parseInt(result.value, 2);
       expression.textContent = temp;
     } else {
       result.value += key;
     }
   } else {
     if (key == "C") {
-      clearCalculator();
+      clear();
     } else if (key == "CE") {
       result.value = "";
     } else if (key == "Backspace") {
@@ -136,7 +132,7 @@ function updateDisplay(key) {
       }
     } else if (key == "1/x") {
       const inputValue = parseFloat(result.value);
-      if (inputValue !== 0) {
+      if (inputValue != 0) {
         result.value = 1 / inputValue;
         expression.textContent = `1/${inputValue}`;
       } else {
@@ -170,23 +166,10 @@ function updateDisplay(key) {
   }
 }
 
-function evalBinary(binaryString) {
-  const decimalValue = parseInt(binaryString, 2);
-  return decimalValue.toString(2);
-}
-
-function binToDec(binaryString) {
-  return parseInt(binaryString, 2);
-}
-
-function decToBin(decimalValue) {
-  return decimalValue.toString(2);
-}
-
-function updateButtonVisibility() {
+function toBinary() {
   buttons.forEach((button) => {
     const id = button.id;
-    if (isBinaryView) {
+    if (isBinary) {
       if (["ce", "c", "backspace", "zero", "one", "equals"].includes(id)) {
         button.style.display = "block";
       } else {
@@ -198,7 +181,7 @@ function updateButtonVisibility() {
   });
 }
 
-function clearCalculator() {
+function clear() {
   result.value = "";
   expression.textContent = "Form";
 }
