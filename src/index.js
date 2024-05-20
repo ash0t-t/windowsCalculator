@@ -67,7 +67,7 @@ function keyboardHandler(key) {
 
 function processInput(key) {
   if (isBinary) {
-    if (["0", "1", "Backspace", "C", "CE", "="].includes(key)) {
+    if (["0", "1", "+", "-", "Backspace", "C", "CE", "="].includes(key)) {
       updateDisplay(key);
     }
   } else {
@@ -104,9 +104,16 @@ function updateDisplay(key) {
     } else if (key == "Backspace") {
       result.value = result.value.slice(0, -1);
     } else if (key == "=") {
-      const temp = result.value;
-      result.value = parseInt(result.value, 2);
-      expression.textContent = temp;
+      try {
+        const binary = result.value;
+        const decimal = binary.replace(/[01]+/g, (match) => parseInt(match, 2));
+        const decimalRes = eval(decimal);
+        result.value = decimalRes.toString(10);
+        expression.textContent = `${binary} = ${decimalRes}`;
+      } catch (error) {
+        result.value = "Error";
+        expression.textContent = "Error";
+      }
     } else {
       result.value += key;
     }
@@ -170,7 +177,18 @@ function toBinary() {
   buttons.forEach((button) => {
     const id = button.id;
     if (isBinary) {
-      if (["ce", "c", "backspace", "zero", "one", "equals"].includes(id)) {
+      if (
+        [
+          "ce",
+          "c",
+          "backspace",
+          "zero",
+          "one",
+          "equals",
+          "add",
+          "subtract",
+        ].includes(id)
+      ) {
         button.style.display = "block";
       } else {
         button.style.display = "none";
