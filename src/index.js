@@ -5,6 +5,9 @@ const buttons = document.querySelectorAll(".buttons button");
 
 let isBinary = false;
 viewBtn.onclick = () => {
+  if (!isBinary) {
+    convertToBinary();
+  }
   isBinary = !isBinary;
   viewBtn.textContent = isBinary ? "Calculator" : "Binary";
   toBinary();
@@ -168,6 +171,9 @@ function updateDisplay(key) {
       result.value = inputValue / 100;
       expression.textContent = `${inputValue}%`;
     } else {
+      if (!isValidInput(result.value + key)) {
+        return;
+      }
       result.value += key;
     }
   }
@@ -202,4 +208,28 @@ function toBinary() {
 function clear() {
   result.value = "";
   expression.textContent = "Form";
+}
+
+function convertToBinary() {
+  const decimalValue = parseFloat(result.value);
+  if (!isNaN(decimalValue)) {
+    result.value = decimalValue.toString(2);
+    expression.textContent = `${decimalValue} to binary`;
+  }
+}
+
+function isValidInput(input) {
+  const operators = ["+", "-", "*", "/"];
+  const lastChar = input[input.length - 1];
+  const secondLastChar = input[input.length - 2];
+  if (lastChar == "." && secondLastChar == ".") {
+    return false;
+  }
+  if (operators.includes(lastChar) && operators.includes(secondLastChar)) {
+    return false;
+  }
+  if (lastChar == "." && input.split(".").length > 2) {
+    return false;
+  }
+  return true;
 }
