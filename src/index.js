@@ -5,7 +5,9 @@ const buttons = document.querySelectorAll(".buttons button");
 
 let isBinary = false;
 viewBtn.onclick = () => {
-  if (!isBinary) {
+  if (isBinary) {
+    convertToDecimal();
+  } else {
     convertToBinary();
   }
   isBinary = !isBinary;
@@ -109,15 +111,17 @@ function updateDisplay(key) {
     } else if (key == "=") {
       try {
         const binary = result.value;
-        const decimal = binary.replace(/[01]+/g, (match) => parseInt(match, 2));
-        const decimalRes = eval(decimal);
-        result.value = decimalRes.toString(10);
-        expression.textContent = `${binary} = ${decimalRes}`;
+        const decimal = eval(binary.replace(/[01]+/g, (match) => parseInt(match, 2)));
+        result.value = decimal.toString(10);
+        expression.textContent = `${binary} = ${decimal}`;
       } catch (error) {
         result.value = "Error";
         expression.textContent = "Error";
       }
     } else {
+      if (!isValidInput(result.value + key)) {
+        return;
+      }
       result.value += key;
     }
   } else {
@@ -215,6 +219,15 @@ function convertToBinary() {
   if (!isNaN(decimalValue)) {
     result.value = decimalValue.toString(2);
     expression.textContent = `${decimalValue} to binary`;
+  }
+}
+
+function convertToDecimal() {
+  const binaryValue = result.value;
+  if (/^[01]+$/.test(binaryValue)) {
+    const decimalValue = parseInt(binaryValue, 2);
+    result.value = decimalValue.toString(10);
+    expression.textContent = `${binaryValue} to decimal`;
   }
 }
 
