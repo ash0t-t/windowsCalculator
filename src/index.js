@@ -112,8 +112,8 @@ function updateDisplay(key) {
       try {
         const binary = result.value;
         const decimal = eval(binary.replace(/[01]+/g, (match) => parseInt(match, 2)));
-        result.value = decimal.toString(10);
-        expression.textContent = `${binary} = ${decimal}`;
+        result.value = decimal.toString(2);
+        expression.textContent = `${binary} = ${decimal}(decimal)`;
       } catch (error) {
         result.value = "Error";
         expression.textContent = "Error";
